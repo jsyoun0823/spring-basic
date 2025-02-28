@@ -14,7 +14,7 @@ import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AllBeanTestTest {
+class AllBeanTest {
 
     @Test
     void findAllBean() {
@@ -22,7 +22,10 @@ public class AllBeanTestTest {
 
         DiscountService discountService = ac.getBean(DiscountService.class);
         Member member = new Member(1L, "userA", Grade.VIP);
-        int discountPrice = discountService.discount(member, 10000, "fixDiscountPolicy")
+        int discountPrice = discountService.discount(member, 10000, "fixDiscountPolicy");
+
+        assertInstanceOf(DiscountService.class, discountService);
+        assertEquals(1000, discountPrice);
     }
 
     static class DiscountService {
@@ -33,8 +36,14 @@ public class AllBeanTestTest {
         public DiscountService(Map<String, DiscountPolicy> policyMap, List<DiscountPolicy> policies) {
             this.policyMap = policyMap;
             this.policies = policies;
-            System.out.println("policyMap = " + policyMap);
-            System.out.println("policies = " + policies);
+        }
+
+        public int discount(Member member, int price, String discountCode) {
+            DiscountPolicy discountPolicy = policyMap.get(discountCode);
+            return discountPolicy.discount(member, price);
         }
     }
+
+
+
 }
